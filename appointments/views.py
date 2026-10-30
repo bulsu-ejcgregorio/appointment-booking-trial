@@ -6,13 +6,27 @@ from .models import Appointment
 
 
 def appointment_list(request):
-    """List upcoming (non-archived) appointments, ordered by date."""
-    appointments = (
-        Appointment.objects.filter(is_archived=False)
-        .select_related('client', 'service')
-    )
-    return render(request, 'appointments/appointment_list.html',
-                  {'appointments': appointments})
+    """List appointments, with optional search by client name and status filter."""
+    q = request.GET.get('q', '').strip()
+    status = request.GET.get('status', '')
+    include_archived = request.GET.get('archived') == '1'
+
+    appointments = Appointment.objects.select_related('client', 'service')
+    if not include_archived:
+        appointments = appointments.filter(is_archived=False)
+    if q:
+        appointments = appointments.filter(client__full_name__icontains=q)
+    if status in Appointment.Status.values:
+        appointments = appointments.filter(status=status)
+
+    return render(request, 'appointments/appointment_list.html', {
+        'appointments': appointments,
+        'q': q,
+        'status': status,
+        'include_archived': include_archived,
+        'status_choices': Appointment.Status.choices,
+        'filters_active': bool(q or status or include_archived),
+    })
 
 
 def appointment_detail(request, pk):
