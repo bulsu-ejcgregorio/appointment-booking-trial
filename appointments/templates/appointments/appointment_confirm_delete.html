@@ -1,0 +1,14 @@
+{% extends "appointments/base.html" %}
+{% block content %}
+  <h2>Archive this appointment?</h2>
+  <p>{{ appointment.client.full_name }} - {{ appointment.service.name }},
+     {{ appointment.scheduled_at|date:"M j, Y g:i A" }}</p>
+  <p class="meta">It will be hidden from the list but kept in the database.</p>
+  <form method="post">
+    {% csrf_token %}
+    <div class="actions">
+      <button type="submit" class="btn btn-danger">Yes, archive it</button>
+      <a href="{% url 'appointments:appointment_detail' appointment.pk %}">Cancel</a>
+    </div>
+  </form>
+{% endblock %}

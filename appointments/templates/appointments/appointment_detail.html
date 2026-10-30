@@ -1,0 +1,19 @@
+{% extends "appointments/base.html" %}
+{% block title %}{{ appointment.client.full_name }}{% endblock %}
+{% block content %}
+  <h2>{{ appointment.client.full_name }}
+    <span class="badge badge-{{ appointment.status }}">{{ appointment.get_status_display }}</span>
+  </h2>
+  <dl>
+    <dt>Service</dt><dd>{{ appointment.service.name }} ({{ appointment.service.duration_minutes }} min)</dd>
+    <dt>When</dt><dd>{{ appointment.scheduled_at|date:"l, F j, Y \a\t g:i A" }}</dd>
+    <dt>Email</dt><dd>{{ appointment.client.email }}</dd>
+    <dt>Phone</dt><dd>{{ appointment.client.phone }}</dd>
+    <dt>Notes</dt><dd>{{ appointment.notes|default:"None" }}</dd>
+  </dl>
+  <p>
+    <a href="{% url 'appointments:appointment_list' %}">&larr; Back to all appointments</a> |
+    <a href="{% url 'appointments:appointment_update' appointment.pk %}">Edit</a> |
+    <a href="{% url 'appointments:appointment_delete' appointment.pk %}">Archive</a>
+  </p>
+{% endblock %}

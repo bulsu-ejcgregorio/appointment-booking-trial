@@ -1,0 +1,14 @@
+[
+  {"model": "appointments.appointment", "pk": 1, "fields": {
+    "client_name": "Ana Reyes", "email": "ana@example.com", "service": "checkup",
+    "scheduled_for": "2026-10-12T09:00:00+08:00", "notes": "First visit.",
+    "created_at": "2026-10-03T08:00:00+08:00"}},
+  {"model": "appointments.appointment", "pk": 2, "fields": {
+    "client_name": "Ben Santos", "email": "ben@example.com", "service": "consult",
+    "scheduled_for": "2026-10-13T14:30:00+08:00", "notes": "",
+    "created_at": "2026-10-03T08:05:00+08:00"}},
+  {"model": "appointments.appointment", "pk": 3, "fields": {
+    "client_name": "Carla Lim", "email": "carla@example.com", "service": "followup",
+    "scheduled_for": "2026-10-14T11:15:00+08:00", "notes": "Bring previous results.",
+    "created_at": "2026-10-03T08:10:00+08:00"}}
+]

@@ -1,0 +1,18 @@
+{% extends "appointments/base.html" %}
+{% block content %}
+  <h2>Upcoming appointments</h2>
+  {% if appointments %}
+    <ul>
+      {% for appointment in appointments %}
+        <li>
+          <a href="{% url 'appointments:appointment_detail' appointment.pk %}">{{ appointment.client.full_name }}</a>
+          <span class="meta">- {{ appointment.service.name }},
+            {{ appointment.scheduled_at|date:"M j, Y g:i A" }}</span>
+          <span class="badge badge-{{ appointment.status }}">{{ appointment.get_status_display }}</span>
+        </li>
+      {% endfor %}
+    </ul>
+  {% else %}
+    <p>No appointments yet. <a href="{% url 'appointments:appointment_create' %}">Create the first one</a>.</p>
+  {% endif %}
+{% endblock %}
