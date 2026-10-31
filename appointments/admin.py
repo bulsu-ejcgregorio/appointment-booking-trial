@@ -19,3 +19,7 @@ class AppointmentAdmin(admin.ModelAdmin):
     list_display = ('client', 'service', 'scheduled_at', 'status', 'is_archived')
     list_filter = ('status', 'service', 'is_archived')
     search_fields = ('client__full_name',)
+
+admin.site.site_header = 'Jamella Paws & Friends'
+admin.site.site_title = 'Jamella Paws & Friends Admin'
+admin.site.index_title = 'Manage Appointments, Clients and Services'

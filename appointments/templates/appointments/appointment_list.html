@@ -1,33 +1,47 @@
 {% extends "appointments/base.html" %}
 {% block title %}Appointments{% endblock %}
 {% block content %}
-  <h2 class="mb-5 font-display text-3xl font-semibold text-cocoa-dark">Upcoming Appointments</h2>
+  <h2 class="mb-6 font-display text-3xl font-medium tracking-tight text-cocoa-dark">Upcoming Appointments</h2>
 
-  <form method="get" class="mb-6 flex flex-wrap items-center gap-3 rounded-3xl bg-peach/60 p-4">
-    <input type="text" name="q" value="{{ q }}" placeholder="Search owner name"
-           class="form-control sm:flex-1" aria-label="Search owner name">
-    <select name="status" class="form-control sm:w-44" aria-label="Filter by status">
-      <option value="">All statuses</option>
-      {% for value, label in status_choices %}
-        <option value="{{ value }}" {% if value == status %}selected{% endif %}>{{ label }}</option>
-      {% endfor %}
-    </select>
-    <label class="flex items-center gap-2 text-sm font-semibold">
-      <input type="checkbox" name="archived" value="1" {% if include_archived %}checked{% endif %}
-             class="h-4 w-4 rounded border-peach accent-blush-dark">
-      Include archived
-    </label>
-    <button type="submit" class="btn">Search</button>
-    <a href="{% url 'appointments:appointment_list' %}" class="font-semibold underline">Clear</a>
+  <form method="get" class="mb-8">
+    <div class="flex flex-col gap-1 rounded-3xl bg-white p-1.5 ring-1 ring-peach sm:flex-row sm:items-center sm:rounded-full">
+      <label class="relative flex-1">
+        <span class="sr-only">Search owner name</span>
+        <svg class="pointer-events-none absolute left-4 top-1/2 h-4 w-4 -translate-y-1/2 text-cocoa/50" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true">
+          <circle cx="9" cy="9" r="6"/><path d="M14 14l4 4"/>
+        </svg>
+        <input type="text" name="q" value="{{ q }}" placeholder="Search owner name"
+               class="w-full rounded-full bg-transparent py-2.5 pl-10 pr-4 placeholder:text-cocoa/40 focus:bg-cream focus:outline-none focus:ring-2 focus:ring-blush">
+      </label>
+      <span class="hidden h-6 w-px bg-peach sm:block" aria-hidden="true"></span>
+      <select name="status" aria-label="Filter by status"
+              class="rounded-full bg-transparent px-4 py-2.5 focus:bg-cream focus:outline-none focus:ring-2 focus:ring-blush">
+        <option value="">All statuses</option>
+        {% for value, label in status_choices %}
+          <option value="{{ value }}" {% if value == status %}selected{% endif %}>{{ label }}</option>
+        {% endfor %}
+      </select>
+      <button type="submit" class="btn">Search</button>
+    </div>
+    <div class="mt-3 flex items-center gap-5 px-4 text-sm">
+      <label class="flex items-center gap-2">
+        <input type="checkbox" name="archived" value="1" {% if include_archived %}checked{% endif %}
+               class="h-4 w-4 rounded border-peach accent-blush-dark">
+        Include archived
+      </label>
+      {% if filters_active %}
+        <a href="{% url 'appointments:appointment_list' %}" class="underline decoration-blush underline-offset-4 hover:text-cocoa-dark">Clear</a>
+      {% endif %}
+    </div>
   </form>
 
   {% if appointments %}
-    <ul class="space-y-3">
+    <ul class="space-y-2.5">
       {% for appointment in appointments %}
-        <li class="flex items-center gap-4 rounded-3xl bg-white p-4 shadow-sm ring-1 ring-peach">
-          <div class="flex h-16 w-16 shrink-0 flex-col items-center justify-center rounded-2xl bg-peach font-display text-cocoa-dark">
-            <span class="text-sm leading-none">{{ appointment.scheduled_at|date:"M" }}</span>
-            <span class="text-2xl font-semibold leading-tight">{{ appointment.scheduled_at|date:"j" }}</span>
+        <li class="flex items-center gap-4 rounded-2xl bg-white p-3.5 ring-1 ring-peach transition hover:ring-blush">
+          <div class="flex h-14 w-14 shrink-0 flex-col items-center justify-center rounded-xl bg-peach/70 font-display text-cocoa-dark">
+            <span class="text-xs leading-none">{{ appointment.scheduled_at|date:"M" }}</span>
+            <span class="text-xl font-medium leading-tight">{{ appointment.scheduled_at|date:"j" }}</span>
           </div>
           <div class="min-w-0 flex-1">
             {% if appointment.is_archived %}
@@ -38,7 +52,7 @@
             {% endif %}
             <p class="truncate text-sm">{{ appointment.service.name }}, {{ appointment.scheduled_at|date:"g:i A" }}</p>
             {% if appointment.notes %}
-              <p class="truncate text-sm text-cocoa/70">{{ appointment.notes|truncatechars:60 }}</p>
+              <p class="truncate text-sm text-cocoa/60">{{ appointment.notes|truncatechars:60 }}</p>
             {% endif %}
           </div>
           <div class="flex shrink-0 flex-col items-end gap-1">
@@ -49,14 +63,16 @@
       {% endfor %}
     </ul>
   {% elif filters_active %}
-    <div class="rounded-3xl bg-white p-8 text-center ring-1 ring-peach">
-      <p class="font-display text-xl">No appointments match your search</p>
-      <p class="mt-1">Try a different name or status, or <a href="{% url 'appointments:appointment_list' %}" class="font-semibold underline">clear the filters</a>.</p>
+    <div class="rounded-3xl border border-dashed border-blush px-6 py-12 text-center">
+      <p class="font-display text-xl font-medium text-cocoa-dark">No appointments match your search</p>
+      <p class="mt-1 text-cocoa/70">Try a different name or status, or <a href="{% url 'appointments:appointment_list' %}" class="underline decoration-blush underline-offset-4">clear the filters</a>.</p>
     </div>
   {% else %}
-    <div class="rounded-3xl bg-white p-8 text-center ring-1 ring-peach">
-      <p class="font-display text-xl">No appointments yet. Let's book a furry friend! 🐶</p>
-      <a href="{% url 'appointments:appointment_create' %}" class="btn mt-4">Create the first appointment</a>
+    <div class="rounded-3xl border border-dashed border-blush px-6 py-14 text-center">
+      <div class="mx-auto flex h-14 w-14 items-center justify-center rounded-full bg-peach text-2xl" aria-hidden="true">🐾</div>
+      <p class="mt-4 font-display text-xl font-medium text-cocoa-dark">No appointments yet</p>
+      <p class="mt-1 text-cocoa/70">Let's book a furry friend.</p>
+      <a href="{% url 'appointments:appointment_create' %}" class="btn mt-6">Create the first appointment</a>
     </div>
   {% endif %}
 {% endblock %}

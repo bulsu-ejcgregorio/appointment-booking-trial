@@ -33,13 +33,13 @@
   <style type="text/tailwindcss">
     /* Shared pieces, used by every page */
     .form-control {
-      @apply w-full rounded-2xl border-2 border-peach bg-white px-4 py-2.5 text-cocoa placeholder:text-cocoa/40 focus:border-blush focus:outline-none focus:ring-4 focus:ring-blush/30;
+      @apply w-full rounded-xl border border-peach bg-white px-4 py-2.5 text-cocoa placeholder:text-cocoa/40 transition focus:border-blush focus:outline-none focus:ring-4 focus:ring-blush/25;
     }
     .btn {
-      @apply inline-flex items-center justify-center rounded-full bg-blush-dark px-6 py-2.5 font-display font-medium text-white shadow-sm transition hover:bg-cocoa focus:outline-none focus-visible:ring-4 focus-visible:ring-blush;
+      @apply inline-flex items-center justify-center rounded-full bg-blush-dark px-6 py-2.5 font-display text-[0.95rem] font-medium text-white transition hover:bg-cocoa focus:outline-none focus-visible:ring-4 focus-visible:ring-blush;
     }
     .btn-soft {
-      @apply inline-flex items-center justify-center rounded-full bg-peach px-6 py-2.5 font-display font-medium text-cocoa-dark transition hover:bg-blush-light focus:outline-none focus-visible:ring-4 focus-visible:ring-blush;
+      @apply inline-flex items-center justify-center rounded-full border border-cocoa/25 px-6 py-2.5 font-display text-[0.95rem] font-medium text-cocoa-dark transition hover:bg-peach/60 focus:outline-none focus-visible:ring-4 focus-visible:ring-blush;
     }
     .badge { @apply inline-block rounded-full px-3 py-0.5 font-display text-sm font-medium; }
     .badge-scheduled { background: #E7EBDC; color: #4F5A36; }
@@ -51,33 +51,66 @@
 </head>
 <body class="min-h-screen bg-cream font-sans text-cocoa antialiased">
 
-  <header class="border-b-2 border-peach">
-    <div class="mx-auto flex max-w-4xl flex-col items-center gap-2 px-4 py-3 sm:flex-row sm:justify-between">
+  <svg width="0" height="0" class="absolute" aria-hidden="true">
+      <symbol id="paw" viewBox="0 0 64 64">
+        <path d="M32 31c-7 0-13 6-13 12 0 4 3 7 7 7 2 0 4-1 6-1s4 1 6 1c4 0 7-3 7-7 0-6-6-12-13-12z"/>
+        <ellipse cx="19" cy="28" rx="4.2" ry="5.4" transform="rotate(-20 19 28)"/>
+        <ellipse cx="27" cy="20" rx="4.2" ry="5.8" transform="rotate(-6 27 20)"/>
+        <ellipse cx="37" cy="20" rx="4.2" ry="5.8" transform="rotate(6 37 20)"/>
+        <ellipse cx="45" cy="28" rx="4.2" ry="5.4" transform="rotate(20 45 28)"/>
+      </symbol>
+    </svg>
+
+  <!-- Decorative paw trails: faint, in the side margins, wide screens only -->
+  <div class="pointer-events-none fixed inset-0 -z-10 hidden overflow-hidden min-[1000px]:block" aria-hidden="true">
+    <svg viewBox="0 0 100 290" class="absolute left-1.5 top-44 w-10 fill-current text-blush opacity-40 min-[1180px]:left-10 min-[1180px]:w-24 min-[1180px]:opacity-30">
+      <use href="#paw" x="6"  y="0"   width="40" height="40" transform="rotate(-15 26 20)"/>
+      <use href="#paw" x="52" y="55"  width="40" height="40" transform="rotate(10 72 75)"/>
+      <use href="#paw" x="6"  y="115" width="40" height="40" transform="rotate(-15 26 135)"/>
+      <use href="#paw" x="52" y="170" width="40" height="40" transform="rotate(10 72 190)"/>
+      <use href="#paw" x="6"  y="230" width="40" height="40" transform="rotate(-15 26 250)"/>
+    </svg>
+    <svg viewBox="0 0 100 290" class="absolute bottom-24 right-1.5 w-10 fill-current text-sage opacity-50 min-[1180px]:right-10 min-[1180px]:w-24 min-[1180px]:opacity-40">
+      <use href="#paw" x="52" y="0"   width="40" height="40" transform="rotate(15 72 20)"/>
+      <use href="#paw" x="6"  y="55"  width="40" height="40" transform="rotate(-10 26 75)"/>
+      <use href="#paw" x="52" y="115" width="40" height="40" transform="rotate(15 72 135)"/>
+      <use href="#paw" x="6"  y="170" width="40" height="40" transform="rotate(-10 26 190)"/>
+      <use href="#paw" x="52" y="230" width="40" height="40" transform="rotate(15 72 250)"/>
+    </svg>
+  </div>
+
+  <header class="border-b border-peach">
+    <div class="mx-auto flex max-w-4xl flex-col items-center gap-3 px-4 py-4 sm:flex-row sm:justify-between">
       <a href="{% url 'appointments:appointment_list' %}" class="shrink-0">
         <img src="{% static 'appointments/logo.png' %}"
              alt="Jamella Paws &amp; Friends, Veterinary &amp; Grooming Center"
              class="h-24 w-auto sm:h-28">
       </a>
       {% with current=request.resolver_match.url_name %}
-      <nav class="flex flex-wrap items-center justify-center gap-1 font-display" aria-label="Main">
+      <nav class="flex flex-wrap items-center justify-center gap-x-2 font-display" aria-label="Main">
         <a href="{% url 'appointments:appointment_list' %}"
            {% if current == 'appointment_list' or current == 'appointment_detail' %}aria-current="page"{% endif %}
-           class="rounded-full px-4 py-2 font-medium transition hover:bg-peach {% if current == 'appointment_list' or current == 'appointment_detail' %}bg-peach text-cocoa-dark{% endif %}">All Appointments</a>
+           class="relative px-3 py-2 font-medium transition hover:text-cocoa-dark {% if current == 'appointment_list' or current == 'appointment_detail' %}text-cocoa-dark after:absolute after:inset-x-3 after:bottom-0 after:h-0.5 after:rounded-full after:bg-blush-dark{% else %}text-cocoa/75{% endif %}">All Appointments</a>
         <a href="{% url 'appointments:appointment_create' %}"
            {% if current == 'appointment_create' %}aria-current="page"{% endif %}
-           class="rounded-full px-4 py-2 font-medium transition hover:bg-peach {% if current == 'appointment_create' %}bg-peach text-cocoa-dark{% endif %}">New Appointment</a>
+           class="relative px-3 py-2 font-medium transition hover:text-cocoa-dark {% if current == 'appointment_create' %}text-cocoa-dark after:absolute after:inset-x-3 after:bottom-0 after:h-0.5 after:rounded-full after:bg-blush-dark{% else %}text-cocoa/75{% endif %}">New Appointment</a>
         <a href="{% url 'admin:index' %}"
-           class="rounded-full px-4 py-2 font-medium transition hover:bg-peach">Admin</a>
+           class="relative px-3 py-2 font-medium text-cocoa/75 transition hover:text-cocoa-dark">Admin</a>
       </nav>
       {% endwith %}
     </div>
   </header>
 
-  <main class="mx-auto max-w-4xl px-4 py-8">
+  <main class="mx-auto max-w-4xl px-4 py-10">
     {% block content %}{% endblock %}
   </main>
 
-  <footer class="pb-8 text-center text-sm text-cocoa/70">
+  <footer class="mx-auto max-w-4xl border-t border-peach px-4 py-6 text-center text-sm text-cocoa/60">
+    <div class="mb-3 flex items-center justify-center gap-3 fill-current text-blush" aria-hidden="true">
+      <svg class="h-5 w-5 -rotate-12 opacity-60"><use href="#paw"/></svg>
+      <svg class="h-6 w-6 opacity-80"><use href="#paw"/></svg>
+      <svg class="h-5 w-5 rotate-12 opacity-60"><use href="#paw"/></svg>
+    </div>
     Jamella Paws &amp; Friends, Veterinary &amp; Grooming Center
   </footer>
 

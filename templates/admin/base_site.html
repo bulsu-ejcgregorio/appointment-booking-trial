@@ -1,0 +1,86 @@
+{% extends "admin/base_site.html" %}
+{% load static %}
+
+{% block extrastyle %}{{ block.super }}
+<style>
+  /* Brand colors from the Jamella Paws & Friends logo.
+     The same values are used for light and dark, so the admin always matches the site. */
+  :root,
+  html[data-theme="light"],
+  html[data-theme="dark"] {
+    --primary: #B84B3E;
+    --secondary: #7B5B45;
+    --accent: #7B5B45;
+    --primary-fg: #fff;
+
+    --body-fg: #4A3628;
+    --body-bg: #FEFAF7;
+    --body-quiet-color: #6B5B4E;
+    --body-loud-color: #3E2C20;
+
+    --header-color: #5E4332;
+    --header-branding-color: #5E4332;
+    --header-bg: #FBE3D3;
+    --header-link-color: #5E4332;
+
+    --breadcrumbs-fg: #FBE3D3;
+    --breadcrumbs-link-fg: #fff;
+    --breadcrumbs-bg: #7B5B45;
+
+    --link-fg: #9C3A2F;
+    --link-hover-color: #5E4332;
+    --link-selected-fg: #B84B3E;
+
+    --hairline-color: #F3DDCF;
+    --border-color: #E8CDBB;
+    --darkest-bg: #5E4332;
+    --darker-bg: #7B5B45;
+
+    --button-fg: #fff;
+    --button-bg: #B84B3E;
+    --button-hover-bg: #7B5B45;
+    --default-button-bg: #7B5B45;
+    --default-button-hover-bg: #5E4332;
+    --close-button-bg: #8A7769;
+    --close-button-hover-bg: #6B5B4E;
+    --delete-button-bg: #B84B3E;
+    --delete-button-hover-bg: #8F362B;
+
+    --selected-bg: #FCE4E0;
+    --selected-row: #FCE4E0;
+    --object-tools-bg: #7B5B45;
+    --object-tools-hover-bg: #5E4332;
+
+    /* These caused the black rows and the black "Recent actions" panel */
+    --darkened-bg: #FDF1E8;
+    --message-success-bg: #E7EBDC;
+    --message-warning-bg: #FBE3D3;
+    --message-error-bg: #FCE4E0;
+    --error-fg: #9C3A2F;
+    --related-modal-background: rgba(94, 67, 50, 0.5);
+    color-scheme: light;
+  }
+
+  #header { padding: 8px 24px; }
+  #site-name { margin: 0; }
+  #site-name img { display: block; height: 56px; width: auto; }
+  #user-tools a { border-bottom-color: rgba(94, 67, 50, 0.4); }
+
+  /* Rounded, friendlier corners to match the site */
+  .module { border-radius: 16px; overflow: hidden; }
+  .button, input[type=submit], input[type=button], .submit-row input, a.button { border-radius: 999px; }
+  input[type=text], input[type=email], input[type=password], input[type=number],
+  input[type=url], input[type=datetime-local], select, textarea { border-radius: 10px; }
+
+  /* The theme switcher is not needed because the admin uses one theme */
+  .theme-toggle { display: none; }
+</style>
+{% endblock %}
+
+{% block branding %}
+<div id="site-name">
+  <a href="{% url 'admin:index' %}">
+    <img src="{% static 'appointments/logo.png' %}" alt="Jamella Paws &amp; Friends admin">
+  </a>
+</div>
+{% endblock %}
