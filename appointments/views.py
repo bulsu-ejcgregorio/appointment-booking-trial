@@ -44,7 +44,7 @@ def appointment_create(request):
         appointment = form.save()
         return redirect('appointments:appointment_detail', pk=appointment.pk)
     return render(request, 'appointments/appointment_form.html',
-                  {'form': form, 'title': 'New appointment'})
+                  {'form': form, 'title': 'New Appointment'})
 
 
 def appointment_update(request, pk):

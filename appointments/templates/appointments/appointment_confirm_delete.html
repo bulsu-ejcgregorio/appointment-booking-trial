@@ -1,14 +1,18 @@
 {% extends "appointments/base.html" %}
+{% block title %}Archive appointment{% endblock %}
 {% block content %}
-  <h2>Archive this appointment?</h2>
-  <p>{{ appointment.client.full_name }} - {{ appointment.service.name }},
-     {{ appointment.scheduled_at|date:"M j, Y g:i A" }}</p>
-  <p class="meta">It will be hidden from the list but kept in the database.</p>
-  <form method="post">
-    {% csrf_token %}
-    <div class="actions">
-      <button type="submit" class="btn btn-danger">Yes, archive it</button>
-      <a href="{% url 'appointments:appointment_detail' appointment.pk %}">Cancel</a>
-    </div>
-  </form>
+  <div class="mx-auto max-w-xl rounded-3xl bg-white p-6 text-center shadow-sm ring-1 ring-peach sm:p-8">
+    <h2 class="font-display text-3xl font-semibold text-cocoa-dark">Archive this appointment?</h2>
+    <p class="mt-4 text-lg font-semibold">
+      {{ appointment.client.full_name }}, {{ appointment.service.name }}<br>
+      {{ appointment.scheduled_at|date:"M j, Y g:i A" }}
+    </p>
+    <p class="mt-2 text-cocoa/70">It will be hidden from the list but kept in the database. Its time slot becomes free again.</p>
+
+    <form method="post" class="mt-6 flex flex-wrap items-center justify-center gap-4">
+      {% csrf_token %}
+      <button type="submit" class="btn">Yes, archive it</button>
+      <a href="{% url 'appointments:appointment_detail' appointment.pk %}" class="font-semibold underline">Cancel</a>
+    </form>
+  </div>
 {% endblock %}

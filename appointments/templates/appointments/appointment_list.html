@@ -1,45 +1,62 @@
 {% extends "appointments/base.html" %}
+{% block title %}Appointments{% endblock %}
 {% block content %}
-  <style>
-    .filters { display: flex; flex-wrap: wrap; gap: 10px; align-items: center; margin-bottom: 1.2rem; }
-    .filters .form-control { width: auto; flex: 1 1 160px; }
-    .badge-archived { background: #eee; color: #555; }
-  </style>
+  <h2 class="mb-5 font-display text-3xl font-semibold text-cocoa-dark">Upcoming Appointments</h2>
 
-  <h2>Upcoming appointments</h2>
-
-  <form method="get" class="filters">
-    <input type="text" name="q" value="{{ q }}" placeholder="Search client name" class="form-control">
-    <select name="status" class="form-control">
+  <form method="get" class="mb-6 flex flex-wrap items-center gap-3 rounded-3xl bg-peach/60 p-4">
+    <input type="text" name="q" value="{{ q }}" placeholder="Search owner name"
+           class="form-control sm:flex-1" aria-label="Search owner name">
+    <select name="status" class="form-control sm:w-44" aria-label="Filter by status">
       <option value="">All statuses</option>
       {% for value, label in status_choices %}
         <option value="{{ value }}" {% if value == status %}selected{% endif %}>{{ label }}</option>
       {% endfor %}
     </select>
-    <label><input type="checkbox" name="archived" value="1" {% if include_archived %}checked{% endif %}> Include archived</label>
+    <label class="flex items-center gap-2 text-sm font-semibold">
+      <input type="checkbox" name="archived" value="1" {% if include_archived %}checked{% endif %}
+             class="h-4 w-4 rounded border-peach accent-blush-dark">
+      Include archived
+    </label>
     <button type="submit" class="btn">Search</button>
-    <a href="{% url 'appointments:appointment_list' %}">Clear</a>
+    <a href="{% url 'appointments:appointment_list' %}" class="font-semibold underline">Clear</a>
   </form>
 
   {% if appointments %}
-    <ul>
+    <ul class="space-y-3">
       {% for appointment in appointments %}
-        <li>
-          {% if appointment.is_archived %}
-            {{ appointment.client.full_name }}
-          {% else %}
-            <a href="{% url 'appointments:appointment_detail' appointment.pk %}">{{ appointment.client.full_name }}</a>
-          {% endif %}
-          <span class="meta">- {{ appointment.service.name }},
-            {{ appointment.scheduled_at|date:"M j, Y g:i A" }}</span>
-          <span class="badge badge-{{ appointment.status }}">{{ appointment.get_status_display }}</span>
-          {% if appointment.is_archived %}<span class="badge badge-archived">Archived</span>{% endif %}
+        <li class="flex items-center gap-4 rounded-3xl bg-white p-4 shadow-sm ring-1 ring-peach">
+          <div class="flex h-16 w-16 shrink-0 flex-col items-center justify-center rounded-2xl bg-peach font-display text-cocoa-dark">
+            <span class="text-sm leading-none">{{ appointment.scheduled_at|date:"M" }}</span>
+            <span class="text-2xl font-semibold leading-tight">{{ appointment.scheduled_at|date:"j" }}</span>
+          </div>
+          <div class="min-w-0 flex-1">
+            {% if appointment.is_archived %}
+              <p class="truncate font-display text-lg font-medium">{{ appointment.client.full_name }}</p>
+            {% else %}
+              <a href="{% url 'appointments:appointment_detail' appointment.pk %}"
+                 class="block truncate font-display text-lg font-medium text-cocoa-dark hover:underline">{{ appointment.client.full_name }}</a>
+            {% endif %}
+            <p class="truncate text-sm">{{ appointment.service.name }}, {{ appointment.scheduled_at|date:"g:i A" }}</p>
+            {% if appointment.notes %}
+              <p class="truncate text-sm text-cocoa/70">{{ appointment.notes|truncatechars:60 }}</p>
+            {% endif %}
+          </div>
+          <div class="flex shrink-0 flex-col items-end gap-1">
+            <span class="badge badge-{{ appointment.status }}">{{ appointment.get_status_display }}</span>
+            {% if appointment.is_archived %}<span class="badge badge-archived">Archived</span>{% endif %}
+          </div>
         </li>
       {% endfor %}
     </ul>
   {% elif filters_active %}
-    <p>No appointments match your search. <a href="{% url 'appointments:appointment_list' %}">Clear the filters</a>.</p>
+    <div class="rounded-3xl bg-white p-8 text-center ring-1 ring-peach">
+      <p class="font-display text-xl">No appointments match your search</p>
+      <p class="mt-1">Try a different name or status, or <a href="{% url 'appointments:appointment_list' %}" class="font-semibold underline">clear the filters</a>.</p>
+    </div>
   {% else %}
-    <p>No appointments yet. <a href="{% url 'appointments:appointment_create' %}">Create the first one</a>.</p>
+    <div class="rounded-3xl bg-white p-8 text-center ring-1 ring-peach">
+      <p class="font-display text-xl">No appointments yet. Let's book a furry friend! 🐶</p>
+      <a href="{% url 'appointments:appointment_create' %}" class="btn mt-4">Create the first appointment</a>
+    </div>
   {% endif %}
 {% endblock %}

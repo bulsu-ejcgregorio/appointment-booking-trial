@@ -31,7 +31,7 @@ class AppointmentForm(forms.ModelForm):
             'client': 'Client',
             'service': 'Service',
             'status': 'Status',
-            'notes': 'Notes (optional)',
+            'notes': 'Pet Name and Notes',
         }
         widgets = {
             'notes': forms.Textarea(

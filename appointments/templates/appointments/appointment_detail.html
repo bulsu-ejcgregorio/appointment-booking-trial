@@ -1,19 +1,39 @@
 {% extends "appointments/base.html" %}
 {% block title %}{{ appointment.client.full_name }}{% endblock %}
 {% block content %}
-  <h2>{{ appointment.client.full_name }}
-    <span class="badge badge-{{ appointment.status }}">{{ appointment.get_status_display }}</span>
-  </h2>
-  <dl>
-    <dt>Service</dt><dd>{{ appointment.service.name }} ({{ appointment.service.duration_minutes }} min)</dd>
-    <dt>When</dt><dd>{{ appointment.scheduled_at|date:"l, F j, Y \a\t g:i A" }}</dd>
-    <dt>Email</dt><dd>{{ appointment.client.email }}</dd>
-    <dt>Phone</dt><dd>{{ appointment.client.phone }}</dd>
-    <dt>Notes</dt><dd>{{ appointment.notes|default:"None" }}</dd>
-  </dl>
-  <p>
-    <a href="{% url 'appointments:appointment_list' %}">&larr; Back to all appointments</a> |
-    <a href="{% url 'appointments:appointment_update' appointment.pk %}">Edit</a> |
-    <a href="{% url 'appointments:appointment_delete' appointment.pk %}">Archive</a>
-  </p>
+  <article class="rounded-3xl bg-white p-6 shadow-sm ring-1 ring-peach sm:p-8">
+    <div class="flex flex-wrap items-center justify-between gap-3">
+      <h2 class="font-display text-3xl font-semibold text-cocoa-dark">{{ appointment.client.full_name }}</h2>
+      <span class="badge badge-{{ appointment.status }}">{{ appointment.get_status_display }}</span>
+    </div>
+
+    <dl class="mt-6 grid gap-x-8 gap-y-5 sm:grid-cols-2">
+      <div>
+        <dt class="font-display text-sm text-cocoa/70">Service</dt>
+        <dd class="text-lg font-semibold">{{ appointment.service.name }} ({{ appointment.service.duration_minutes }} min)</dd>
+      </div>
+      <div>
+        <dt class="font-display text-sm text-cocoa/70">When</dt>
+        <dd class="text-lg font-semibold">{{ appointment.scheduled_at|date:"l, F j, Y \a\t g:i A" }}</dd>
+      </div>
+      <div>
+        <dt class="font-display text-sm text-cocoa/70">Email</dt>
+        <dd class="text-lg font-semibold break-all">{{ appointment.client.email }}</dd>
+      </div>
+      <div>
+        <dt class="font-display text-sm text-cocoa/70">Phone</dt>
+        <dd class="text-lg font-semibold">{{ appointment.client.phone }}</dd>
+      </div>
+      <div class="sm:col-span-2">
+        <dt class="font-display text-sm text-cocoa/70">Pet Name and Notes</dt>
+        <dd class="rounded-2xl bg-cream p-4 text-lg">{{ appointment.notes|default:"None" }}</dd>
+      </div>
+    </dl>
+
+    <div class="mt-8 flex flex-wrap items-center gap-3">
+      <a href="{% url 'appointments:appointment_update' appointment.pk %}" class="btn">Edit</a>
+      <a href="{% url 'appointments:appointment_delete' appointment.pk %}" class="btn-soft">Archive</a>
+      <a href="{% url 'appointments:appointment_list' %}" class="font-semibold underline">&larr; Back to all appointments</a>
+    </div>
+  </article>
 {% endblock %}

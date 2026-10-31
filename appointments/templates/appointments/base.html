@@ -1,41 +1,85 @@
-<!DOCTYPE html>
+{% load static %}<!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>{% block title %}Appointments{% endblock %}</title>
-  <style>
-    body { font-family: system-ui, sans-serif; max-width: 42rem; margin: 2rem auto; padding: 0 1rem; color: #222; }
-    h1 { border-bottom: 3px solid #0b5; padding-bottom: .3rem; }
-    a { color: #075; }
-    nav { margin-bottom: 1.2rem; display: flex; gap: 1.2rem; }
-    ul { padding-left: 1.2rem; }
-    li { margin: .5rem 0; }
-    .meta { color: #666; font-size: .9rem; }
-    dt { font-weight: 600; margin-top: .8rem; }
-    dd { margin: 0; }
-    .badge { padding: 2px 10px; border-radius: 999px; font-size: .8rem; font-weight: 600; }
-    .badge-scheduled { background: #dff5e8; color: #0b6b3a; }
-    .badge-completed { background: #dce9fb; color: #1b4f9c; }
-    .badge-cancelled { background: #fbe0e0; color: #a12b2b; }
-    .form-card { background: #fff; border: 1px solid #e3e8e6; border-radius: 12px; padding: 24px 28px; box-shadow: 0 4px 16px rgba(0,0,0,.06); }
-    .field { margin-bottom: 16px; }
-    .field label { display: block; font-weight: 600; margin-bottom: 6px; }
-    .form-control { width: 100%; box-sizing: border-box; padding: 10px 12px; font-size: 1rem; font-family: inherit; border: 1.5px solid #cfd8d4; border-radius: 8px; background: #fafcfb; }
-    .form-control:focus { outline: none; border-color: #1aa660; box-shadow: 0 0 0 3px rgba(26,166,96,.18); }
-    .error { color: #d64545; font-size: .875rem; margin-top: 5px; }
-    .btn { background: #1aa660; color: #fff; border: none; padding: 10px 24px; font-size: 1rem; font-weight: 600; border-radius: 8px; cursor: pointer; text-decoration: none; display: inline-block; }
-    .btn-danger { background: #d64545; }
-    .actions { display: flex; align-items: center; gap: 16px; margin-top: 22px; }
+  <title>{% block title %}Appointments{% endblock %} | Jamella Paws &amp; Friends</title>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;500;600&family=Nunito:wght@400;600;700&display=swap" rel="stylesheet">
+
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            cream: '#FEFAF7',
+            peach: '#FBE3D3',
+            cocoa: { DEFAULT: '#7B5B45', dark: '#5E4332' },
+            blush: { DEFAULT: '#F4B6AE', light: '#FCE4E0', dark: '#B84B3E' },
+            sage: { DEFAULT: '#B3BB9A', light: '#E7EBDC', dark: '#4F5A36' },
+          },
+          fontFamily: {
+            display: ['Fredoka', 'ui-rounded', 'system-ui', 'sans-serif'],
+            sans: ['Nunito', 'system-ui', 'sans-serif'],
+          },
+        },
+      },
+    }
+  </script>
+
+  <style type="text/tailwindcss">
+    /* Shared pieces, used by every page */
+    .form-control {
+      @apply w-full rounded-2xl border-2 border-peach bg-white px-4 py-2.5 text-cocoa placeholder:text-cocoa/40 focus:border-blush focus:outline-none focus:ring-4 focus:ring-blush/30;
+    }
+    .btn {
+      @apply inline-flex items-center justify-center rounded-full bg-blush-dark px-6 py-2.5 font-display font-medium text-white shadow-sm transition hover:bg-cocoa focus:outline-none focus-visible:ring-4 focus-visible:ring-blush;
+    }
+    .btn-soft {
+      @apply inline-flex items-center justify-center rounded-full bg-peach px-6 py-2.5 font-display font-medium text-cocoa-dark transition hover:bg-blush-light focus:outline-none focus-visible:ring-4 focus-visible:ring-blush;
+    }
+    .badge { @apply inline-block rounded-full px-3 py-0.5 font-display text-sm font-medium; }
+    .badge-scheduled { background: #E7EBDC; color: #4F5A36; }
+    .badge-completed { background: #DCE9F2; color: #2F5575; }
+    .badge-cancelled { background: #FCE4E0; color: #9C3A2F; }
+    .badge-archived  { background: #EEE8E2; color: #6B5B4E; }
+    .field-error { @apply mt-1 text-sm font-semibold text-blush-dark; }
   </style>
 </head>
-<body>
-  <h1>Appointment Booking</h1>
-  <nav>
-    <a href="{% url 'appointments:appointment_list' %}">All appointments</a>
-    <a href="{% url 'appointments:appointment_create' %}">+ New appointment</a>
-    <a href="{% url 'admin:index' %}">Admin</a>
-  </nav>
-  {% block content %}{% endblock %}
+<body class="min-h-screen bg-cream font-sans text-cocoa antialiased">
+
+  <header class="border-b-2 border-peach">
+    <div class="mx-auto flex max-w-4xl flex-col items-center gap-2 px-4 py-3 sm:flex-row sm:justify-between">
+      <a href="{% url 'appointments:appointment_list' %}" class="shrink-0">
+        <img src="{% static 'appointments/logo.png' %}"
+             alt="Jamella Paws &amp; Friends, Veterinary &amp; Grooming Center"
+             class="h-24 w-auto sm:h-28">
+      </a>
+      {% with current=request.resolver_match.url_name %}
+      <nav class="flex flex-wrap items-center justify-center gap-1 font-display" aria-label="Main">
+        <a href="{% url 'appointments:appointment_list' %}"
+           {% if current == 'appointment_list' or current == 'appointment_detail' %}aria-current="page"{% endif %}
+           class="rounded-full px-4 py-2 font-medium transition hover:bg-peach {% if current == 'appointment_list' or current == 'appointment_detail' %}bg-peach text-cocoa-dark{% endif %}">All Appointments</a>
+        <a href="{% url 'appointments:appointment_create' %}"
+           {% if current == 'appointment_create' %}aria-current="page"{% endif %}
+           class="rounded-full px-4 py-2 font-medium transition hover:bg-peach {% if current == 'appointment_create' %}bg-peach text-cocoa-dark{% endif %}">New Appointment</a>
+        <a href="{% url 'admin:index' %}"
+           class="rounded-full px-4 py-2 font-medium transition hover:bg-peach">Admin</a>
+      </nav>
+      {% endwith %}
+    </div>
+  </header>
+
+  <main class="mx-auto max-w-4xl px-4 py-8">
+    {% block content %}{% endblock %}
+  </main>
+
+  <footer class="pb-8 text-center text-sm text-cocoa/70">
+    Jamella Paws &amp; Friends, Veterinary &amp; Grooming Center
+  </footer>
+
 </body>
 </html>
