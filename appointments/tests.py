@@ -1,5 +1,6 @@
 from datetime import timedelta
 
+from django.core.exceptions import ValidationError
 from django.test import TestCase
 from django.urls import reverse
 from django.utils import timezone
@@ -186,7 +187,8 @@ class ArchiveTests(BaseTestCase):
         self.assertIsNotNone(appointment.archived_at)
         self.assertEqual(Appointment.objects.count(), 1)
 
-        class SearchFilterTests(BaseTestCase):
+
+class SearchFilterTests(BaseTestCase):
     def setUp(self):
         super().setUp()
         self.appt_a = self.make_appointment(self.client_a, '10:00')
@@ -226,3 +228,29 @@ class ArchiveTests(BaseTestCase):
         response, results = self.listed('?q=zzz')
         self.assertEqual(results, [])
         self.assertContains(response, 'No appointments match your search')
+
+
+class ClientValidationTests(TestCase):
+    def make_client(self, **overrides):
+        data = {'full_name': 'Ana Reyes', 'email': 'ana@gmail.com',
+                'phone': '09171234567'}
+        data.update(overrides)
+        return Client(**data)
+
+    def test_valid_phone_numbers(self):
+        for phone in ('09171234567', '0917 123 4567', '0917-123-4567'):
+            with self.subTest(phone=phone):
+                self.make_client(phone=phone).full_clean()  # no error
+
+    def test_invalid_phone_numbers(self):
+        for phone in ('0917123456', '091712345678', '+639171234567',
+                      '639171234567', '12345678901', 'abcdefghijk'):
+            with self.subTest(phone=phone):
+                with self.assertRaises(ValidationError):
+                    self.make_client(phone=phone).full_clean()
+
+    def test_invalid_email(self):
+        for email in ('ana@gmail', 'ana.gmail.com', 'ana@'):
+            with self.subTest(email=email):
+                with self.assertRaises(ValidationError):
+                    self.make_client(email=email).full_clean()

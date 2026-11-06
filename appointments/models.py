@@ -1,4 +1,16 @@
+import re
+
+from django.core.exceptions import ValidationError
 from django.db import models
+
+
+def validate_ph_phone(value):
+    """Philippine mobile number: 11 digits starting with 09 (e.g. 09171234567)."""
+    cleaned = re.sub(r'[\s-]', '', value)  # allow spaces and dashes when typing
+    if not re.fullmatch(r'09\d{9}', cleaned):
+        raise ValidationError(
+            'Enter a valid mobile number: 11 digits starting with 09 '
+            '(e.g. 09171234567).')
 
 
 class Service(models.Model):
@@ -13,7 +25,7 @@ class Service(models.Model):
 class Client(models.Model):
     full_name = models.CharField(max_length=120)
     email = models.EmailField()
-    phone = models.CharField(max_length=30)
+    phone = models.CharField(max_length=30, validators=[validate_ph_phone])
 
     def __str__(self):
         return self.full_name
